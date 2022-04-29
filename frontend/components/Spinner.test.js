@@ -13,6 +13,7 @@ test('test that spinner renders without errors', () => {
   render(<Spinner />);
 });
 
+//fails or breaks code when I attempt to do this
 // test('test that spinner renders without errors', () => {
 //   render(<Spinner spinnerOn={false}/>);
 //   const spinner = screen.queryByTestId("spinner")

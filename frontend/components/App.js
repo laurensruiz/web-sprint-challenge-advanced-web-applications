@@ -24,7 +24,8 @@ export default function App() {
   const redirectToLogin = () => {
     navigate('/')
     /* ✨ implement */ }
-  const redirectToArticles = () => { navigate('/articles')
+  const redirectToArticles = () => {
+     navigate('/articles')
     /* ✨ implement */ }
 
   const logout = () => {
@@ -95,6 +96,7 @@ export default function App() {
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
     setMessage('');
+    setSpinnerOn(true)
     axiosWithAuth().post('/articles', article)
     .then(res => {      
       setArticles([...articles, res.data.article])
@@ -112,6 +114,7 @@ export default function App() {
     // ✨ implement
     // You got this!
     setMessage('');
+    setSpinnerOn(true)
     axiosWithAuth().put(`/articles/${article_id}`, article)
     .then(res => {      
       setArticles([...articles.filter(item => (item.article_id !== article_id)), res.data.article])
@@ -159,7 +162,7 @@ export default function App() {
         <h1>Advanced Web Applications</h1>
         <nav>
           <NavLink id="loginScreen" to="/">Login</NavLink>
-          <NavLink id="articlesScreen" to={localStorage.getItem("token") ?"/articles" : "/"}>Articles</NavLink>
+          <NavLink id="articlesScreen" to={localStorage.getItem("token") ? "/articles" : "/"}>Articles</NavLink>
         </nav>
         <Routes>
           <Route path="/" element={<LoginForm login={login}/>} />
