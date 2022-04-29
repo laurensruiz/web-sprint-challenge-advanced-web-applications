@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PT from 'prop-types'
+import axiosWithAuth from '../axios'
 
 const initialFormValues = { title: '', text: '', topic: '' }
 
@@ -7,12 +8,15 @@ export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
   // ✨ where are my props? Destructure them here
 
+  const {articles, updateArticle, postArticle, currentArticleId} = props
+
   useEffect(() => {
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
-  })
+    currentArticleId ? setValues(articles.find(article => article.article_id === currentArticleId)) : setValues(initialFormValues)
+  }, [currentArticleId])
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -24,6 +28,10 @@ export default function ArticleForm(props) {
     // ✨ implement
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
+    currentArticleId ? 
+    updateArticle(currentArticleId, values) :
+    postArticle(values)
+    console.log(currentArticleId)
   }
 
   const isDisabled = () => {
