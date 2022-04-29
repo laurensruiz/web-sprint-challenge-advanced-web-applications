@@ -31,12 +31,17 @@ export default function ArticleForm(props) {
     currentArticleId ? 
     updateArticle(currentArticleId, values) :
     postArticle(values)
-    console.log(currentArticleId)
+    setValues(initialFormValues)
   }
 
   const isDisabled = () => {
     // ✨ implement
     // Make sure the inputs have some values
+    if(values.title.toString().trim().length && values.text.toString().trim().length && values.topic.toString().trim().length > 0){
+      return false
+    } else {
+      return true
+    }
   }
 
   return (

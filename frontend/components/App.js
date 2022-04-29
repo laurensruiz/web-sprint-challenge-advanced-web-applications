@@ -7,6 +7,7 @@ import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
 
 import axiosWithAuth from '../axios'
+import { render } from '@testing-library/react';
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -32,6 +33,12 @@ export default function App() {
     // and a message saying "Goodbye!" should be set in its proper state.
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
+    if(localStorage.getItem("token")){
+      localStorage.removeItem("token")
+      setMessage("Goodbye!")
+      redirectToLogin()
+      setSpinnerOn(false)
+    }
   }
 
   const login = ({ username, password }) => {
@@ -53,6 +60,7 @@ export default function App() {
     .catch(err => {
       console.log(err)
       redirectToLogin()
+      setSpinnerOn(false)
   })
   }
 
@@ -70,7 +78,6 @@ export default function App() {
     setSpinnerOn(true)
     axiosWithAuth().get('/articles')
     .then(res => {      
-      console.log(res)
       setArticles(res.data.articles)
       setMessage(res.data.message)
       setSpinnerOn(false)
@@ -78,7 +85,8 @@ export default function App() {
     .catch(err => {
       console.log(err)
       redirectToLogin()
-  })
+      setSpinnerOn(false)
+  }) 
   }
 
   const postArticle = article => {
@@ -90,7 +98,6 @@ export default function App() {
     setSpinnerOn(true)
     axiosWithAuth().post('/articles', article)
     .then(res => {      
-      console.log(res)
       setArticles([...articles, res.data.article])
       setMessage(res.data.message)
       setSpinnerOn(false)
@@ -98,6 +105,7 @@ export default function App() {
     .catch(err => {
       console.log(err)
       redirectToLogin()
+      setSpinnerOn(false)
   })
   }
 
@@ -106,10 +114,8 @@ export default function App() {
     // You got this!
     setMessage();
     setSpinnerOn(true)
-    console.log(article_id)
     axiosWithAuth().put(`/articles/${article_id}`, article)
     .then(res => {      
-      console.log(res)
       setArticles([...articles.filter(item => (item.article_id !== article_id)), res.data.article])
       setMessage(res.data.message)
       setSpinnerOn(false)
@@ -118,6 +124,7 @@ export default function App() {
     .catch(err => {
       console.log(err)
       redirectToLogin()
+      setSpinnerOn(false)
   })
   }
 
@@ -126,7 +133,21 @@ export default function App() {
 
   const deleteArticle = article_id => {
     // ✨ implement
-    console.log(article_id)
+    setMessage();
+    setSpinnerOn(true)
+    axiosWithAuth().delete(`/articles/${article_id}`)
+    .then (res => {
+      console.log(res)
+      setArticles([...articles.filter(item => (item.article_id !== article_id))])
+      setMessage(res.data.message)
+      setSpinnerOn(false)
+      redirectToArticles()
+    })
+    .catch(err => {
+      console.log(err)
+      redirectToLogin()
+      setSpinnerOn(false)
+  })
   }
 
   return (
@@ -139,10 +160,11 @@ export default function App() {
         <h1>Advanced Web Applications</h1>
         <nav>
           <NavLink id="loginScreen" to="/">Login</NavLink>
-          <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
+          <NavLink id="articlesScreen" to={localStorage.getItem("token") ?"/articles" : "/"}>Articles</NavLink>
         </nav>
         <Routes>
           <Route path="/" element={<LoginForm login={login}/>} />
+          {}
           <Route path="articles" element={
             <>
               <ArticleForm 
